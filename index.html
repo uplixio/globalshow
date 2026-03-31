@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ixi-O — 네트워크 계층에서 통화 지능을 복구하세요</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8fafc;--bg2:#ffffff;--card:#ffffff;
+  --b:#e2e8f0;--bm:#cbd5e1;--ba:rgba(168,85,247,.5);
+  --p:#9333ea;--a:#e11d48;--g:linear-gradient(135deg,#9333ea,#e11d48);
+  --ok:#059669;--warn:#d97706;--err:#dc2626;
+  --t:#0f172a;--t2:#475569;--t3:#64748b;
+  --fd:'Pretendard',sans-serif;--fb:'Pretendard',sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg) url("data:image/svg+xml,%3Csvg width='56' height='56' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M56 0H0v56' fill='none' stroke='rgba(0,0,0,.03)' stroke-width='1'/%3E%3C/svg%3E");color:var(--t);font-family:var(--fb);font-weight:400;line-height:1.65;overflow-x:hidden}
+.D{font-family:var(--fd)}.G{background:var(--g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lbl{font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--p);display:block;margin-bottom:1.4rem}
+.box{width:100%;max-width:1180px;margin:0 auto;padding:0 32px}
+.layer{position:relative;padding:110px 0;overflow:hidden}
+
+/* FADE ANIMATIONS */
+.fu{opacity:0;transform:translateY(28px);transition:opacity .75s var(--ease),transform .75s var(--ease)}
+.fu.on{opacity:1;transform:none}
+.fu.d1{transition-delay:.1s}.fu.d2{transition-delay:.2s}.fu.d3{transition-delay:.3s}.fu.d4{transition-delay:.4s}
+
+/* NAV */
+#nav{position:fixed;top:0;left:0;right:0;z-index:999;height:64px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);background:rgba(248,250,252,.85);border-bottom:1px solid var(--b)}
+.nav-i{height:100%;display:flex;align-items:center;justify-content:space-between;max-width:1180px;margin:0 auto;padding:0 32px}
+.logo{font-family:var(--fd);font-size:1.4rem;font-weight:900;letter-spacing:-.02em;cursor:pointer}
+.logo span{background:var(--g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.npill{padding:8px 20px;border-radius:50px;font-size:.8rem;font-weight:600;color:var(--p);text-decoration:none;border:1px solid rgba(168,85,247,.3);background:rgba(168,85,247,.1);transition:.25s var(--ease)}
+.npill:hover{background:rgba(168,85,247,.15);transform:scale(1.03)}
+#prog{height:2px;background:var(--g);width:0;position:absolute;bottom:0;left:0;transition:width .1s linear}
+
+/* HERO */
+#s0{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:100px}
+.glow{position:absolute;top:-15%;left:50%;transform:translateX(-50%);width:80vw;height:60vh;background:radial-gradient(ellipse,rgba(168,85,247,.12) 0%,rgba(244,63,94,.05) 45%,transparent 70%);pointer-events:none}
+.h-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:50px;border:1px solid rgba(147,51,234,.2);background:rgba(147,51,234,.08);font-size:.75rem;font-weight:600;color:#7e22ce;margin-bottom:34px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px rgba(5,150,105,.5);animation:pd 2.2s ease-in-out infinite}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:.4}}
+.h-hl{font-family:var(--fd);font-size:clamp(2.4rem,6vw,4.5rem);font-weight:900;line-height:1.15;letter-spacing:-.04em;margin-bottom:26px}
+.h-sub{font-size:clamp(1rem,1.8vw,1.2rem);color:var(--t2);max-width:540px;margin:0 auto 48px;line-height:1.75}
+.scroll-cta{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;color:var(--p);text-decoration:none;font-weight:600;transition:.2s}
+.scroll-cta:hover{color:#7e22ce}
+.arr{animation:ba 1.9s ease-in-out infinite;display:inline-block}
+@keyframes ba{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+
+/* STORY BRANCH */
+#s1{padding:90px 0}
+.si{text-align:center;margin-bottom:52px}
+.si h2{font-family:var(--fd);font-size:clamp(1.75rem,3.2vw,2.6rem);font-weight:700;letter-spacing:-.025em}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:960px;margin:0 auto}
+.sc{border:1.5px solid var(--b);border-radius:24px;padding:42px 38px;cursor:pointer;transition:all .3s var(--ease);position:relative;overflow:hidden;background:var(--card);box-shadow:0 10px 30px rgba(0,0,0,.03)}
+.sc::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .35s;border-radius:inherit}
+.sca::before{background:radial-gradient(ellipse at top left,rgba(244,63,94,.05) 0%,transparent 65%)}
+.scb::before{background:radial-gradient(ellipse at top right,rgba(168,85,247,.06) 0%,transparent 65%)}
+.sc:hover{border-color:var(--ba);transform:translateY(-5px);box-shadow:0 20px 40px rgba(0,0,0,.08)}
+.sc:hover::before,.sc.active::before{opacity:1}
+.sc.active{border-color:var(--p);box-shadow:0 0 0 1px var(--p),0 20px 40px rgba(168,85,247,.15)}
+.sc.dim{opacity:.4;pointer-events:none;transition:opacity .5s}
+.rtags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.rtag{font-size:.65rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:4px 10px;border-radius:50px;border:1px solid var(--bm);color:var(--t3);background:#f1f5f9}
+.sc h3{font-family:var(--fd);font-size:clamp(1.2rem,2.1vw,1.58rem);font-weight:700;letter-spacing:-.025em;color:var(--t);line-height:1.3;margin-bottom:14px}
+.sc p{font-size:.9rem;color:var(--t2);line-height:1.72;margin-bottom:28px}
+.scta{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;transition:gap .25s var(--ease)}
+.sc:hover .scta{gap:13px}
+.sca .scta{color:#e11d48}.scb .scta{color:#9333ea}
+
+/* FACT */
+#s2{padding:90px 0}
+.fc{display:grid;grid-template-columns:1fr 1fr;gap:1px;max-width:1020px;margin:0 auto;background:var(--b);border-radius:28px;overflow:hidden}
+.fp{background:var(--bg2);padding:72px 50px;position:relative;transition:all .5s ease}
+.fp::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .55s}
+.fpa::before{background:radial-gradient(ellipse at 50% 0%,rgba(244,63,94,.04) 0%,transparent 60%)}
+.fpb::before{background:radial-gradient(ellipse at 50% 0%,rgba(168,85,247,.05) 0%,transparent 60%)}
+.fp.lit::before{opacity:1}.fp.dim{opacity:.3}
+.flbl{font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;display:block;margin-bottom:16px}
+.fpa .flbl{color:#e11d48}.fpb .flbl{color:#9333ea}
+.fnum{font-family:var(--fd);font-size:clamp(3.2rem,8.5vw,7rem);font-weight:900;line-height:1;letter-spacing:-.05em;background:var(--g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:18px;display:block}
+.fp h3{font-family:var(--fd);font-size:clamp(1.1rem,1.8vw,1.35rem);font-weight:700;color:var(--t);margin-bottom:12px;line-height:1.4}
+.fp p{font-size:.9rem;color:var(--t2);line-height:1.75}
+
+/* 3A – REALITY */
+.tc{display:grid;grid-template-columns:55% 45%;gap:72px;align-items:center}
+.tc h2{font-family:var(--fd);font-size:clamp(1.75rem,3.2vw,2.6rem);font-weight:700;letter-spacing:-.03em;line-height:1.25;margin-bottom:20px}
+.tc p{font-size:.95rem;color:var(--t2);line-height:1.8;margin-bottom:14px}
+.bcard{border:1px solid var(--b);border-radius:16px;padding:28px;background:var(--card);box-shadow:0 5px 15px rgba(0,0,0,.02)}
+.btitle{font-size:.7rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px}
+.br{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.bl{font-size:.75rem;font-weight:500;color:var(--t2);width:42px;text-align:right;flex-shrink:0}
+.bt{flex:1;height:8px;background:var(--b);border-radius:50px;overflow:hidden}
+.bf{height:100%;border-radius:50px;transform-origin:left;transform:scaleX(0);transition:transform 1.1s var(--ease)}
+.bf.on{transform:scaleX(1)}
+.bfr{background:linear-gradient(90deg,#e11d48,#ea580c)}
+.bfp{background:var(--g)}
+.bv{font-size:.75rem;font-weight:700;color:var(--t);width:38px;flex-shrink:0}
+.csrc{font-size:.65rem;color:var(--t3);margin-top:12px}
+
+/* 3B – PERSONA */
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.pcard{border:1px solid var(--b);border-radius:24px;padding:38px;background:var(--card);box-shadow:0 5px 15px rgba(0,0,0,.02)}
+.phd{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.pav{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.35rem;flex-shrink:0}
+.pav-a{background:rgba(225,29,72,.1)} .pav-b{background:rgba(147,51,234,.1)}
+.pm h4{font-weight:700;font-size:.95rem;color:var(--t)}.pm span{font-size:.75rem;color:var(--t3);font-weight:500}
+.osc{background:#f8fafc;border-radius:8px;overflow:hidden;border:1px solid var(--b);margin-bottom:14px}
+.or{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--b);font-size:.8rem;font-weight:500}
+.or:last-child{border-bottom:none}
+.or-l{color:var(--t2)}
+.tog{width:36px;height:20px;border-radius:50px;position:relative;flex-shrink:0}
+.ton{background:var(--ok)}.tof{background:#cbd5e1}
+.tog::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.ton::after{right:3px}.tof::after{left:3px}
+.wchip{display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:50px;padding:4px 10px;font-size:.75rem;color:#059669;font-weight:600}
+.smt{display:flex;flex-direction:column;gap:10px}
+.sb{max-width:86%;padding:10px 14px;border-radius:14px;font-size:.8rem;line-height:1.5;font-weight:500}
+.si2{background:#f1f5f9;color:var(--t);align-self:flex-start;border-bottom-left-radius:3px;border:1px solid var(--b)}
+.so{background:rgba(147,51,234,.1);border:1px solid rgba(147,51,234,.2);color:#7e22ce;align-self:flex-end;border-bottom-right-radius:3px}
+.st{font-size:.65rem;color:var(--t3);margin-top:2px;padding:0 3px;font-weight:500}
+.pimp{margin-top:20px;padding:14px 18px;border-radius:8px;border-left:4px solid;font-size:.85rem;font-weight:600;line-height:1.5}
+.ia{border-color:var(--warn);background:rgba(217,119,6,.08);color:#b45309}
+.ir{border-color:var(--a);background:rgba(225,29,72,.08);color:#be123c}
+
+/* 3C – X CHART */
+.xwrap{max-width:840px;margin:0 auto 56px;border:1px solid var(--b);border-radius:20px;padding:28px 28px 14px;background:var(--card);box-shadow:0 8px 25px rgba(0,0,0,.03)}
+.xleg{display:flex;justify-content:space-between;margin-bottom:18px}
+.xl-a{font-size:.75rem;font-weight:700;color:#dc2626;display:flex;align-items:center;gap:7px}
+.xl-b{font-size:.75rem;font-weight:700;color:#9333ea;display:flex;align-items:center;gap:7px}
+.xline{width:26px;height:3px;border-radius:2px}
+.ic3g{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:960px;margin:0 auto}
+.ic3{padding:26px 24px;border-left:4px solid var(--err);background:rgba(220,38,38,.04);border-radius:0 8px 8px 0}
+.ic3 .ici{font-size:1.5rem;margin-bottom:10px}
+.ic3 h4{font-size:.9rem;font-weight:700;color:var(--t);margin-bottom:8px}
+.ic3 p{font-size:.8rem;color:var(--t2);line-height:1.65}
+svg line {stroke:var(--b)!important;}
+
+/* 3D – BRIDGE */
+.s3d{background:#f1f5f9;padding:130px 0;text-align:center;position:relative;overflow:hidden;border-top:1px solid var(--b);border-bottom:1px solid var(--b)}
+.s3d::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70vw;height:70vh;background:radial-gradient(ellipse,rgba(168,85,247,.08) 0%,transparent 65%);pointer-events:none}
+.bri{position:relative;z-index:2}
+.bri h2{font-family:var(--fd);font-size:clamp(1.8rem,5vw,3.5rem);font-weight:900;letter-spacing:-.045em;color:var(--t);line-height:1.15;margin-bottom:26px;max-width:780px;margin-left:auto;margin-right:auto}
+.bri p{font-size:1rem;font-weight:500;color:var(--t2);max-width:560px;margin:0 auto;line-height:1.8}
+
+/* ROI */
+#s4{padding:110px 0}
+.rh{text-align:center;margin-bottom:68px}
+.rh h2{font-family:var(--fd);font-size:clamp(1.75rem,3.2vw,2.6rem);font-weight:700;letter-spacing:-.03em;margin-bottom:12px}
+.rh p{color:var(--t2);font-size:.95rem}
+.ig{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:60px}
+.ip{border:1px solid var(--b);border-radius:16px;padding:26px 20px;background:var(--card);transition:.25s var(--ease);box-shadow:0 5px 15px rgba(0,0,0,.02)}
+.ip:hover{border-color:var(--bm);transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.06)}
+.iico{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;margin-bottom:14px}
+.ig1{background:rgba(5,150,105,.12)}.ig2{background:rgba(147,51,234,.12)}
+.ig3{background:rgba(225,29,72,.12)}.ig4{background:rgba(217,119,6,.12)}
+.ip h4{font-size:.9rem;font-weight:700;color:var(--t);margin-bottom:7px}
+.ip p{font-size:.8rem;color:var(--t2);line-height:1.65}
+.cw{max-width:820px;margin:0 auto;border:1px solid rgba(168,85,247,.3);border-radius:28px;padding:52px;background:var(--bg2);position:relative;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.04)}
+.cw::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--g);opacity:.8}
+.cwhd{text-align:center;margin-bottom:44px}
+.cwhd h3{font-family:var(--fd);font-size:1.6rem;font-weight:700;margin-bottom:7px;letter-spacing:-.02em;color:var(--t)}
+.cwhd p{font-size:.85rem;color:var(--t2)}
+.sg{margin-bottom:32px}
+.shd{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.sl{font-size:.85rem;font-weight:600;color:var(--t)}
+.sv{font-family:var(--fd);font-size:1.1rem;font-weight:700;background:var(--g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+input[type=range].rs{-webkit-appearance:none;width:100%;height:6px;border-radius:50px;outline:none;cursor:pointer;background:linear-gradient(to right,#9333ea 0%,#e11d48 var(--fp,30%),var(--b) var(--fp,30%))}
+input[type=range].rs::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--p);box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer;transition:transform .15s}
+input[type=range].rs::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range].rs::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--p);cursor:pointer}
+.rres{border-top:1px solid var(--b);padding-top:32px;margin-top:6px}
+.rrow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--b)}
+.rrow:last-of-type{border-bottom:none}
+.rl{font-size:.85rem;color:var(--t2);font-weight:500}.rv{font-family:var(--fd);font-size:1.05rem;font-weight:700;color:var(--t)}
+.rtot{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-radius:14px;background:rgba(147,51,234,.05);border:1px solid rgba(147,51,234,.2);margin:14px 0 22px}
+.rtl{font-size:.9rem;font-weight:700;color:var(--t)}
+.rtv{font-family:var(--fd);font-size:1.85rem;font-weight:900;background:var(--g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gbtn{width:100%;padding:16px;border-radius:14px;background:var(--g);color:#fff;font-family:var(--fb);font-size:.95rem;font-weight:600;border:none;cursor:pointer;transition:.25s var(--ease);display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;box-shadow:0 10px 25px rgba(147,51,234,.2)}
+.gbtn:hover{opacity:.9;transform:scale(1.02)}
+
+/* SOLUTION */
+#s5{padding:110px 0}
+.sh{text-align:center;margin-bottom:14px}
+.sh h2{font-family:var(--fd);font-size:clamp(1.75rem,3.2vw,2.6rem);font-weight:700;letter-spacing:-.03em;margin-bottom:12px}
+.sh p{color:var(--t2);font-size:.95rem;max-width:620px;margin:0 auto}
+.pscroll{display:flex;gap:18px;overflow-x:auto;padding:6px 4px 22px;scroll-snap-type:x mandatory;cursor:grab;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(168,85,247,.4) transparent;margin:52px 0 6px}
+.pscroll:active{cursor:grabbing}
+.pscroll::-webkit-scrollbar{height:4px}
+.pscroll::-webkit-scrollbar-thumb{background:rgba(168,85,247,.4);border-radius:50px}
+.pcard{min-width:300px;flex-shrink:0;border:1px solid var(--b);border-radius:22px;padding:36px 30px;background:var(--card);scroll-snap-align:start;transition:all .25s var(--ease);position:relative;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,.03)}
+.pcard::after{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.pk1::after{background:var(--g)}.pk2::after{background:linear-gradient(90deg,#e11d48,#ea580c)}
+.pk3::after{background:linear-gradient(90deg,#d97706,#059669)}.pk4::after{background:linear-gradient(90deg,#0891b2,#4f46e5)}
+.pcard:hover{border-color:var(--bm);transform:translateY(-5px);box-shadow:0 22px 50px rgba(0,0,0,.08)}
+.pbadge{display:inline-block;padding:4px 12px;border-radius:50px;font-size:.65rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:18px}
+.pb1{background:rgba(147,51,234,.1);color:#7e22ce}.pb2{background:rgba(225,29,72,.1);color:#be123c}
+.pb3{background:rgba(217,119,6,.1);color:#b45309}.pb4{background:rgba(8,145,178,.1);color:#0e7490}
+.pcard .pi{font-size:2.2rem;margin-bottom:14px}
+.pcard h3{font-family:var(--fd);font-size:1.3rem;font-weight:700;margin-bottom:10px;letter-spacing:-.02em;color:var(--t)}
+.pcard>p{font-size:.85rem;color:var(--t2);line-height:1.65;margin-bottom:22px;font-weight:500}
+.pfl{list-style:none;display:flex;flex-direction:column;gap:10px}
+.pfl li{display:flex;align-items:flex-start;gap:10px;font-size:.8rem;color:var(--t2);line-height:1.5;font-weight:500}
+.pfl li::before{content:'✓';color:var(--ok);font-weight:800;flex-shrink:0;margin-top:1px}
+.shint{text-align:center;font-size:.75rem;font-weight:600;color:var(--t3);margin-top:4px}
+
+/* PHONE DEMO */
+.dw{display:grid;grid-template-columns:1fr auto;gap:64px;align-items:center;max-width:860px;margin:72px auto 0}
+.dtabs{display:flex;flex-direction:column;gap:12px}
+.dt{padding:16px 20px;border-radius:14px;border:1px solid var(--b);background:var(--card);cursor:pointer;transition:.25s var(--ease);display:flex;align-items:center;gap:14px;box-shadow:0 4px 12px rgba(0,0,0,.02)}
+.dt:hover{border-color:var(--bm);box-shadow:0 8px 20px rgba(0,0,0,.04)}
+.dt.on{border-color:var(--p);background:rgba(147,51,234,.05);box-shadow:0 8px 20px rgba(147,51,234,.1)}
+.dt .dti{font-size:1.3rem}
+.dt h4{font-size:.85rem;font-weight:700;color:var(--t);margin-bottom:2px}
+.dt p{font-size:.75rem;color:var(--t2);font-weight:500}
+.phone{width:260px;height:520px;border-radius:36px;border:2px solid var(--b);background:#ffffff;position:relative;overflow:hidden;flex-shrink:0;box-shadow:0 30px 70px rgba(0,0,0,.1),inset 0 0 0 1px rgba(0,0,0,.05)}
+.notch{width:76px;height:24px;background:#ffffff;border-radius:0 0 14px 14px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:10;border:2px solid var(--b);border-top:none}
+.pscr{position:absolute;inset:0;padding:34px 16px 18px;display:flex;flex-direction:column;background:#f8fafc}
+.pst{display:flex;justify-content:space-between;font-size:.65rem;color:var(--t3);margin-bottom:14px;font-weight:600}
+.ds{display:none;flex-direction:column;flex:1;animation:di .3s ease}
+.ds.on{display:flex}
+@keyframes di{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.cal{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:6px 0;margin-top:20px}
+.cav{width:64px;height:64px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:6px;box-shadow:0 4px 10px rgba(0,0,0,.05)}
+.cn{font-size:.9rem;font-weight:700;color:var(--t)}.cs{font-size:.7rem;color:var(--t2);font-weight:500}
+.aibadge{background:rgba(147,51,234,.1);border:1px solid rgba(147,51,234,.2);border-radius:50px;padding:5px 12px;font-size:.65rem;color:#7e22ce;font-weight:700;margin-top:4px}
+.sum{background:#ffffff;border:1px solid var(--b);border-radius:10px;padding:12px 14px;font-size:.7rem;color:var(--t2);line-height:1.6;margin-bottom:10px;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,.03)}
+.sum .sh2{font-weight:700;color:var(--t);margin-bottom:6px;font-size:.75rem}
+.tchip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(5,150,105,.1);border:1px solid rgba(5,150,105,.2);border-radius:50px;font-size:.65rem;color:#059669;font-weight:600}
+.dw2{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:10px;padding:10px 12px;font-size:.7rem;color:#b91c1c;display:flex;align-items:center;gap:8px;margin-bottom:8px;font-weight:600}
+.dwa{background:rgba(217,119,6,.08);border:1px solid rgba(217,119,6,.2);border-radius:10px;padding:10px 12px;font-size:.7rem;color:#b45309;display:flex;align-items:center;gap:8px;margin-bottom:10px;font-weight:600}
+.blk{text-align:center;padding:10px;background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;font-size:.75rem;color:#b91c1c;font-weight:700}
+.sbar{display:flex;align-items:center;gap:8px;background:#ffffff;border:1px solid var(--bm);border-radius:50px;padding:8px 14px;margin-bottom:14px;font-size:.7rem;color:var(--t2);font-weight:500}
+.sres{background:#ffffff;border:1px solid var(--b);border-radius:10px;padding:12px 14px;font-size:.7rem;margin-bottom:10px;box-shadow:0 4px 12px rgba(0,0,0,.02)}
+.srt{font-weight:700;color:var(--t);margin-bottom:4px;font-size:.75rem}
+.srb{color:var(--t2);line-height:1.5;font-weight:500}
+.priv-r{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#ffffff;border:1px solid var(--b);border-radius:10px;font-size:.7rem;font-weight:600;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.02)}
+.priv-l{color:var(--t2)}
+.pon{padding:3px 8px;border-radius:50px;font-weight:800;font-size:.6rem}
+.pg{background:rgba(5,150,105,.1);color:#059669}.pp{background:rgba(147,51,234,.1);color:#7e22ce}
+
+/* TRUST */
+#s6{padding:100px 0}
+.th{text-align:center;margin-bottom:60px}
+.th h2{font-family:var(--fd);font-size:clamp(1.55rem,2.8vw,2.3rem);font-weight:700;letter-spacing:-.025em;margin-bottom:11px}
+.th p{color:var(--t2);font-size:.95rem}
+.tg{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:48px}
+.tp{padding:28px 22px;border:1px solid var(--b);border-radius:16px;background:var(--card);box-shadow:0 5px 15px rgba(0,0,0,.02)}
+.tck{width:38px;height:38px;border-radius:50%;background:rgba(5,150,105,.1);display:flex;align-items:center;justify-content:center;color:var(--ok);font-size:1rem;font-weight:800;margin-bottom:16px}
+.tp h4{font-size:.9rem;font-weight:700;color:var(--t);margin-bottom:8px}
+.tp p{font-size:.8rem;color:var(--t2);line-height:1.65;font-weight:500}
+.cbrow{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:48px}
+.cb{display:flex;align-items:center;gap:10px;padding:12px 20px;border:1px solid var(--b);border-radius:10px;background:var(--card);transition:.25s var(--ease);box-shadow:0 4px 10px rgba(0,0,0,.02)}
+.cb:hover{border-color:var(--ba);box-shadow:0 8px 20px rgba(0,0,0,.05)}
+.cb span:first-child{font-size:1.1rem}
+.cb span:last-child{font-size:.85rem;font-weight:600;color:var(--t)}
+.maxis{max-width:740px;margin:0 auto;border-left:4px solid var(--p);background:rgba(147,51,234,.04);padding:24px 32px;border-radius:0 16px 16px 0}
+.maxis p{font-size:.95rem;color:var(--t2);line-height:1.75;font-weight:500}
+.maxis strong{color:var(--t);font-weight:700}
+
+/* CTA */
+#s7{background:#f1f5f9;padding:130px 0;text-align:center;position:relative;overflow:hidden;border-top:1px solid var(--b)}
+#s7::before{content:'';position:absolute;bottom:-10%;left:50%;transform:translateX(-50%);width:65vw;height:55vh;background:radial-gradient(ellipse,rgba(168,85,247,.1) 0%,transparent 70%);pointer-events:none}
+.ci{position:relative;z-index:2}
+.cpre{color:var(--t3);font-size:.8rem;font-weight:600;margin-bottom:16px}
+#s7 h2{font-family:var(--fd);font-size:clamp(2.6rem,7vw,4.5rem);font-weight:900;letter-spacing:-.05em;color:var(--t);line-height:1.1;margin-bottom:18px}
+#s7 .csub{font-size:1.05rem;color:var(--t2);max-width:480px;margin:0 auto 52px;line-height:1.75;font-weight:500}
+.fw{max-width:500px;margin:0 auto;background:#ffffff;border:1px solid var(--b);border-radius:26px;padding:46px;text-align:left;box-shadow:0 25px 60px rgba(0,0,0,.05)}
+.ff{margin-bottom:16px}
+.ff label{display:block;font-size:.8rem;font-weight:600;color:var(--t2);margin-bottom:8px}
+.ff input{width:100%;background:#f8fafc;border:1px solid var(--bm);border-radius:10px;padding:14px 16px;font-family:var(--fb);font-size:.9rem;color:var(--t);font-weight:500;outline:none;transition:.25s var(--ease)}
+.ff input::placeholder{color:var(--t3);font-weight:400}
+.ff input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(147,51,234,.15);background:#ffffff}
+.ff input.err{border-color:var(--a);box-shadow:0 0 0 3px rgba(225,29,72,.15)}
+.ferr{font-size:.75rem;font-weight:600;color:#e11d48;margin-top:6px;display:none}
+.ferr.on{display:block}
+.sbtn{width:100%;margin-top:24px;padding:16px;border-radius:14px;background:var(--g);color:#fff;font-family:var(--fb);font-size:.95rem;font-weight:600;border:none;cursor:pointer;transition:.25s var(--ease);display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 10px 25px rgba(147,51,234,.2)}
+.sbtn:hover:not(:disabled){opacity:.9;transform:scale(1.02)}
+.sbtn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.fmic{text-align:center;margin-top:18px;font-size:.75rem;color:var(--t3);line-height:1.65;font-weight:500}
+.fsuc{display:none;text-align:center;padding:20px}
+.fsuc.on{display:block}
+.fsuc .fsi{font-size:2.5rem;margin-bottom:14px}
+.fsuc h3{font-family:var(--fd);font-size:1.4rem;font-weight:700;margin-bottom:8px;color:var(--t)}
+.fsuc p{font-size:.9rem;color:var(--t2);font-weight:500}
+footer{background:#f8fafc;border-top:1px solid var(--b);padding:36px 0;text-align:center}
+footer p{font-size:.75rem;font-weight:500;color:var(--t3)}
+
+@media(max-width:1024px){.ig{grid-template-columns:1fr 1fr}.tg{grid-template-columns:1fr 1fr}.tc{grid-template-columns:1fr;gap:44px}.dw{grid-template-columns:1fr;gap:44px}.phone{margin:0 auto}}
+@media(max-width:768px){.layer{padding:80px 0}.box{padding:0 20px}.nav-i{padding:0 20px}.cards{grid-template-columns:1fr}.fc{grid-template-columns:1fr}.pc{grid-template-columns:1fr}.ic3g{grid-template-columns:1fr}.ig{grid-template-columns:1fr}.tg{grid-template-columns:1fr 1fr}.cw{padding:30px 20px}.fw{padding:30px 20px}.fp{padding:50px 30px}}
+@media(max-width:480px){.tg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-i">
+    <div class="logo" onclick="scrollTo({top:0,behavior:'smooth'})">ixi<span>-O</span></div>
+    <a href="#s7" class="npill">파일럿 신청</a>
+  </div>
+  <div id="prog"></div>
+</nav>
+
+<!-- S0: HERO -->
+<section id="s0">
+  <div class="glow"></div>
+  <div class="box">
+    <div style="max-width:860px;margin:0 auto">
+      <div class="h-badge fu"><span class="dot"></span>LG유플러스 검증 완료 · 실제 환경 운용 중</div>
+      <h1 class="h-hl D fu d1">고객들은 전화 통화에 대한<br><span class="G">신뢰</span>를 잃고 있습니다.</h1>
+      <p class="h-sub fu d2">이 문제를 가장 먼저 해결하는 통신사가 향후 10년의 모바일 시장을 주도할 것입니다.</p>
+      <a href="#s1" class="scroll-cta fu d3">고객들에게 일어나고 있는 일 확인하기 <span class="arr">↓</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- S1: STORY BRANCH -->
+<section id="s1" class="layer">
+  <div class="box">
+    <div class="si fu"><span class="lbl" style="text-align:center">시장 상황 · 당면 과제</span>
+      <h2 class="D">현재 귀사의 네트워크는 어떤 위기에 직면해 있습니까?</h2>
+    </div>
+    <div class="cards">
+      <div class="sc sca fu d1" id="ca" onclick="pick('A')">
+        <div class="rtags"><span class="rtag">동남아시아</span><span class="rtag">말레이시아</span><span class="rtag">인도</span><span class="rtag">북미</span></div>
+        <h3>고객들은 전화를 받는 것을 두려워합니다.</h3>
+        <p>AI 딥페이크, 발신자 번호 조작, 초개인화된 음성 피싱으로 인해 모르는 번호는 모두 위협이 되었습니다. 발신자 표시(Caller ID)는 더 이상 신뢰의 기준이 아닙니다.</p>
+        <div class="scta">보안 위기 살펴보기 <span>→</span></div>
+      </div>
+      <div class="sc scb fu d2" id="cb" onclick="pick('B')">
+        <div class="rtags"><span class="rtag">유럽</span><span class="rtag">싱가포르</span><span class="rtag">선진 시장</span></div>
+        <h3>고객들은 영원히 복구할 수 없는 대화를 잃고 있습니다.</h3>
+        <p>AI가 줌(Zoom)과 팀즈(Teams) 회의를 전사하는 시대에, 기록되지 않는 음성 통화는 법적, 운영상 리스크가 됩니다. 기존 음성 네트워크는 뒤처지고 있습니다.</p>
+        <div class="scta">지능화 위기 살펴보기 <span>→</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S2: FACT -->
+<section id="s2" class="layer">
+  <div class="box">
+    <div class="fc fu">
+      <div class="fp fpa" id="fa">
+        <span class="flbl">신뢰의 위기</span>
+        <span class="fnum" id="na">10명 중 0명</span>
+        <h3 class="D">의 고객이 모르는 번호로 온 전화를 무시합니다.</h3>
+        <p>받기 어려워서가 아닙니다. AI 딥페이크 음성과 조작된 발신자 표시로 인해 네트워크의 신뢰 계층이 무너졌기 때문입니다. 놓친 통화는 모두 발생하지 않은 비즈니스 연결입니다.</p>
+      </div>
+      <div class="fp fpb" id="fb">
+        <span class="flbl">지능화 위기</span>
+        <span class="fnum" id="nb">0%</span>
+        <h3 class="D">의 부재중 비즈니스 통화가 회신되지 않습니다.</h3>
+        <p>줌과 팀즈가 AI 회의록을 기본 제공하는 상황에서, 기록되지 않는 음성 통화는 이미 구시대적입니다. 통화는 발생했지만 그 가치는 사라졌습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S3A: REALITY -->
+<section class="layer">
+  <div class="box">
+    <div class="tc">
+      <div class="fu">
+        <span class="lbl">시장 현실 · 2025년</span>
+        <h2 class="D" id="h3a">AI 딥페이크로 인해 발신자 표시가 무의미해졌습니다.</h2>
+        <p class="pa">임원 사칭, 로맨스 스캠, 번호 조작 등 초개인화된 음성 사기가 대규모로 확산되고 있습니다. 통신사들이 구축해 온 신뢰 인프라가 체계적으로 해체되고 있습니다.</p>
+        <p class="pa">매년 수십억 건의 스팸 전화가 귀사의 네트워크에서 처리됩니다. 고객들은 더 이상 제공받지 못하는 보호 기능에 요금을 지불하고 있습니다.</p>
+        <p class="pb" style="display:none">하이브리드 업무 환경으로 인해 AI 회의록이 새로운 기본 요건이 되었습니다. 줌, 팀즈, 미트(Meet)는 AI 요약을 기본으로 제공합니다. B2B 고객에게 기록이 없는 음성 통화는 법적 책임의 소지가 될 수 있습니다.</p>
+        <p class="pb" style="display:none">기업 고객이 필요로 하는 지능형 음성 경험이 아직 귀사의 네트워크에는 존재하지 않습니다.</p>
+      </div>
+      <div class="fu d2">
+        <div class="bcard" id="bca">
+          <div class="btitle">글로벌 스팸 통화량 (연간 십억 건)</div>
+          <div class="br"><span class="bl">2020</span><div class="bt"><div class="bf bfr" data-w="38"></div></div><span class="bv">38B</span></div>
+          <div class="br"><span class="bl">2021</span><div class="bt"><div class="bf bfr" data-w="52"></div></div><span class="bv">52B</span></div>
+          <div class="br"><span class="bl">2022</span><div class="bt"><div class="bf bfr" data-w="68"></div></div><span class="bv">68B</span></div>
+          <div class="br"><span class="bl">2023</span><div class="bt"><div class="bf bfr" data-w="80"></div></div><span class="bv">80B</span></div>
+          <div class="br"><span class="bl">2024</span><div class="bt"><div class="bf bfr" data-w="93"></div></div><span class="bv">93B</span></div>
+          <div class="csrc">출처: Hiya 글로벌 통화 위협 보고서 2024/2025</div>
+        </div>
+        <div class="bcard" id="bcb" style="display:none">
+          <div class="btitle">기업 AI 협업 툴 도입률 (%)</div>
+          <div class="br"><span class="bl">2021</span><div class="bt"><div class="bf bfp" data-w="18"></div></div><span class="bv">18%</span></div>
+          <div class="br"><span class="bl">2022</span><div class="bt"><div class="bf bfp" data-w="32"></div></div><span class="bv">32%</span></div>
+          <div class="br"><span class="bl">2023</span><div class="bt"><div class="bf bfp" data-w="54"></div></div><span class="bv">54%</span></div>
+          <div class="br"><span class="bl">2024</span><div class="bt"><div class="bf bfp" data-w="74"></div></div><span class="bv">74%</span></div>
+          <div class="br"><span class="bl">2025</span><div class="bt"><div class="bf bfp" data-w="89"></div></div><span class="bv">89%</span></div>
+          <div class="csrc">출처: McKinsey 글로벌 AI 도입 설문조사 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S3B: PERSONAS -->
+<section class="layer">
+  <div class="box">
+    <div style="text-align:center;margin-bottom:56px">
+      <span class="lbl" style="text-align:center">고객 행동 · 제로 트러스트 시대</span>
+      <h2 class="D fu" style="font-size:clamp(2rem,4.5vw,3.2rem);font-weight:900;letter-spacing:-.04em;margin-bottom:12px">고객들은 이미 결정을 내렸습니다.</h2>
+      <p class="fu d1" style="color:var(--t2);font-weight:500">고객들은 네트워크가 발전할 때까지 기다려주지 않습니다.</p>
+    </div>
+    <div class="pc">
+      <div class="pcard fu">
+        <div class="phd"><div class="pav pav-a">🧔</div><div class="pm"><h4>아마드</h4><span>글로벌 소싱 디렉터 · 쿠알라룸푸르</span></div></div>
+        <div class="osc">
+          <div class="or"><span class="or-l">알 수 없는 발신자 음소거</span><div class="tog ton"></div></div>
+          <div class="or"><span class="or-l">통화 스크리닝</span><div class="tog ton"></div></div>
+          <div class="or"><span class="or-l">모든 신규 벤더 연락망</span><span class="wchip">✓ WhatsApp</span></div>
+        </div>
+        <div class="pimp ia">음성 트래픽이 귀사의 네트워크를 벗어나 OTT 플랫폼으로 이동하고 있습니다.</div>
+      </div>
+      <div class="pcard fu d2">
+        <div class="phd"><div class="pav pav-b">👩‍💼</div><div class="pm"><h4>사라</h4><span>로펌 파트너 (M&A) · 싱가포르</span></div></div>
+        <div class="smt">
+          <div><div class="sb si2">수신 통화: +65 XXXX XXXX</div><div class="st">14:32 · 화요일</div></div>
+          <div style="align-self:flex-end;text-align:right"><div class="sb so">통화가 거절되었습니다. 대신 팀즈 링크를 보내주실 수 있나요?</div><div class="st" style="text-align:right">14:33 · 전송됨</div></div>
+          <div><div class="sb si2" style="font-size:.75rem;color:var(--t3)">기록되지 않은 통화는 법적 증거로 사용할 수 없습니다.</div></div>
+        </div>
+        <div class="pimp ir">고객들은 음성 인프라의 가치를 적극적으로 축소하고 있습니다.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S3C: X-CHART -->
+<section class="layer">
+  <div class="box">
+    <div style="text-align:center;margin-bottom:52px">
+      <span class="lbl" style="text-align:center">구조적 위협</span>
+      <h2 class="D fu" style="font-size:clamp(1.75rem,3.5vw,2.7rem);font-weight:900;letter-spacing:-.035em;margin-bottom:12px">단순 데이터 파이프(Dumb Pipe)로의 <span class="G">전락.</span></h2>
+      <p class="fu d1" style="color:var(--t2);font-size:.95rem;max-width:520px;margin:0 auto;font-weight:500">손익계산서상 두 개의 곡선이 교차하고 있습니다. 모든 통신사 경영진이 이를 확인해야 합니다.</p>
+    </div>
+    <div class="xwrap fu d2">
+      <div class="xleg">
+        <div class="xl-a"><div class="xline" style="background:linear-gradient(90deg,#6b7280,#ef4444)"></div>↘ 통신사 음성 ARPU</div>
+        <div class="xl-b">OTT / SaaS 의존도 ↗<div class="xline" style="background:linear-gradient(90deg,#a855f7,#f43f5e)"></div></div>
+      </div>
+      <svg id="xsvg" viewBox="0 0 780 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;overflow:visible">
+        <defs>
+          <linearGradient id="ga" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6b7280" stop-opacity=".9"/><stop offset="100%" stop-color="#ef4444" stop-opacity=".65"/></linearGradient>
+          <linearGradient id="go" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#a855f7" stop-opacity=".55"/><stop offset="100%" stop-color="#f43f5e" stop-opacity=".9"/></linearGradient>
+        </defs>
+        <line x1="50" y1="8" x2="50" y2="215" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        <line x1="190" y1="8" x2="190" y2="215" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        <line x1="330" y1="8" x2="330" y2="215" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        <line x1="470" y1="8" x2="470" y2="215" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        <line x1="610" y1="8" x2="610" y2="215" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        <line x1="730" y1="8" x2="730" y2="215" stroke="rgba(0,0,0,.08)" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="50" y="232" text-anchor="middle" fill="#64748b" font-size="10" font-family="Poppins,sans-serif" font-weight="500">2020</text>
+        <text x="190" y="232" text-anchor="middle" fill="#64748b" font-size="10" font-family="Poppins,sans-serif" font-weight="500">2021</text>
+        <text x="330" y="232" text-anchor="middle" fill="#64748b" font-size="10" font-family="Poppins,sans-serif" font-weight="500">2022</text>
+        <text x="470" y="232" text-anchor="middle" fill="#64748b" font-size="10" font-family="Poppins,sans-serif" font-weight="500">2023</text>
+        <text x="610" y="232" text-anchor="middle" fill="#64748b" font-size="10" font-family="Poppins,sans-serif" font-weight="500">2024</text>
+        <text x="730" y="232" text-anchor="middle" fill="#0f172a" font-size="10" font-family="Poppins,sans-serif" font-weight="700">2025+</text>
+        <path id="ap" d="M 50 28 C 190 44,330 86,410 122 S 580 178,730 212" fill="none" stroke="url(#ga)" stroke-width="3" stroke-linecap="round" stroke-dasharray="1000" stroke-dashoffset="1000"/>
+        <path id="op" d="M 50 212 C 190 192,330 158,410 122 S 580 66,730 24" fill="none" stroke="url(#go)" stroke-width="3" stroke-linecap="round" stroke-dasharray="1000" stroke-dashoffset="1000"/>
+        <path id="aa" d="M 50 28 C 190 44,330 86,410 122 S 580 178,730 212 L730 250 L50 250Z" fill="rgba(239,68,68,.04)" opacity="0"/>
+        <path id="oa" d="M 50 212 C 190 192,330 158,410 122 S 580 66,730 24 L730 0 L50 0Z" fill="rgba(168,85,247,.04)" opacity="0"/>
+        <circle id="xring" cx="410" cy="122" r="15" fill="rgba(244,63,94,.12)" opacity="0"/>
+        <circle id="xdot" cx="410" cy="122" r="5.5" fill="#e11d48" opacity="0"/>
+        <text id="xlbl" x="422" y="113" fill="#e11d48" font-size="10" font-family="Poppins,sans-serif" font-weight="700" opacity="0">현재 위치</text>
+      </svg>
+    </div>
+    <div class="ic3g">
+      <div class="ic3 fu"><div class="ici">🔧</div><h4>음성 네트워크 → 단순 데이터 파이프</h4><p>음성 통화가 WhatsApp, Telegram, Teams를 위한 데이터 통로로 전락했습니다. 통신사는 파이프일 뿐, 플랫폼은 그들이 소유합니다.</p></div>
+      <div class="ic3 fu d2"><div class="ici">📉</div><h4>B2B 프리미엄 요금제 붕괴</h4><p>기업 예산이 음성 요금제에서 SaaS 라이선스로 이동하고 있습니다. 이제 ARPU는 통화 품질이 아닌 통화 지능에 의해 결정됩니다.</p></div>
+      <div class="ic3 fu d3"><div class="ici">⚠️</div><h4>인프라 비용의 역설</h4><p>고객이 절대 받지 않을 수십억 건의 통화를 처리하는 데 상호접속료를 지불하고 있습니다. 무대응으로 인한 비용은 매일 눈덩이처럼 불어납니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- S3D: BRIDGE -->
+<section class="s3d">
+  <div class="box bri">
+    <h2 class="D fu">고객들은 이미 스스로를 보호하고 있습니다.<br><span class="G">귀사의 네트워크 없이 말이죠.</span></h2>
+    <p class="fu d2">네트워크 계층에서 음성 경험을 복구하지 않으면,<br>B2B 커뮤니케이션 주도권은 OTT에 영구적으로 넘어갈 것입니다.</p>
+  </div>
+</section>
+
+<!-- S4: ROI CALCULATOR -->
+<section id="s4" class="layer">
+  <div class="box">
+    <div class="rh fu"><span class="lbl" style="text-align:center">비즈니스 임팩트</span>
+      <h2 class="D">이 문제 해결의 경제적 가치.</h2>
+      <p>단순한 예측이 아닙니다. CFO와 반드시 나누어야 할 대화입니다.</p>
+    </div>
+    <div class="ig">
+      <div class="ip fu"><div class="iico ig1">📈</div><h4>프리미엄 요금제 이탈 방지.</h4><p>통화를 신뢰하는 고객은 요금제를 낮추지 않고 업그레이드합니다. ARPU는 대역폭이 아닌 지능형 기능을 따릅니다.</p></div>
+      <div class="ip fu d1"><div class="iico ig2">🛡️</div><h4>사기 전화 차단이 가입자 유지로.</h4><p>스팸 불만은 해지의 가장 큰 선행 지표입니다. 고객이 떠나기 전에 근본 원인을 해결하세요.</p></div>
+      <div class="ip fu d2"><div class="iico ig3">💰</div><h4>생태계를 빠져나가는 SaaS 예산 회수.</h4><p>소규모 사업자(SOHO)와 기업은 통화 지능화에 기꺼이 지불합니다. 그들이 귀사의 네트워크에 머물 이유를 제공하세요.</p></div>
+      <div class="ip fu d3"><div class="iico ig4">🚩</div><h4>아직 도입한 주요 통신사가 없습니다.</h4><p>시장을 선도할 기회가 열려 있습니다. 이 기회는 오래가지 않습니다. 선도자가 시장을 정의합니다.</p></div>
+    </div>
+    <div class="cw fu d2">
+      <div class="cwhd"><h3 class="D">ixi-O 도입 효과 계산기</h3><p>슬라이더를 조정하세요. 결과가 실시간으로 업데이트됩니다.</p></div>
+      <div class="sg"><div class="shd"><span class="sl">총 가입자 수</span><span class="sv" id="vs">10M</span></div><input type="range" class="rs" id="ss" min="1" max="100" value="10" oninput="roi()"></div>
+      <div class="sg"><div class="shd"><span class="sl">월 해지율</span><span class="sv" id="vc">2.0%</span></div><input type="range" class="rs" id="sc" min="5" max="50" value="20" oninput="roi()"></div>
+      <div class="sg"><div class="shd"><span class="sl">스팸으로 인한 해지 (전체 대비 %)</span><span class="sv" id="vsp">30%</span></div><input type="range" class="rs" id="ssp" min="10" max="60" value="30" oninput="roi()"></div>
+      <div class="rres">
+        <div class="rrow"><span class="rl">해지 방어 수익 (연간)</span><span class="rv" id="rc">$0</span></div>
+        <div class="rrow"><span class="rl">ARPU 상승 수익 (연간)</span><span class="rv" id="ra">$0</span></div>
+        <div class="rtot"><span class="rtl">예상 연간 임팩트</span><span class="rtv" id="rt">$0</span></div>
+        <a href="#s7" class="gbtn" id="roicta">이 분석 결과를 바탕으로 파일럿 신청하기 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S5: SOLUTION PACKS + DEMO -->
+<section id="s5" class="layer">
+  <div class="box">
+    <div class="sh fu"><span class="lbl" style="text-align:center">플랫폼</span>
+      <h2 class="D">두 가지 위기. 단 하나의 플랫폼.</h2>
+      <p>ixi-O는 네트워크 계층에서 통화 지능을 복구합니다. 기존 인프라에 배포 가능한 4개의 모듈형 팩을 제공합니다.</p>
+    </div>
+    <div class="fu d1">
+      <div class="pscroll" id="ps">
+        <div class="pcard pk1"><span class="pbadge pb1">팩 1</span><div class="pi">🎙️</div><h3 class="D">AI 통화 처리</h3><p>부재중에도 중요한 내용을 놓치지 마세요.</p><ul class="pfl"><li>SOHO 및 중소기업용 AI 자동 응답</li><li>명시적 동의 녹음 (GDPR 준수)</li><li>실시간 음성-텍스트 변환 (120+ 언어)</li><li>자동 요약: 12분 통화 → 3줄 요약</li><li>할 일 제안 및 캘린더 연동</li></ul></div>
+        <div class="pcard pk2"><span class="pbadge pb2">팩 2</span><div class="pi">🛡️</div><h3 class="D">보안 및 신뢰</h3><p>위협이 고객에게 도달하기 전에 차단하세요.</p><ul class="pfl"><li>번호 기반 스팸 경고 및 자동 차단</li><li>실시간 보이스피싱 탐지</li><li>AI 딥페이크 음성 식별</li><li>글로벌 위협 DB 실시간 동기화</li><li>온디바이스 처리 — 데이터는 단말기에 보관됨</li></ul></div>
+        <div class="pcard pk3"><span class="pbadge pb3">팩 3</span><div class="pi">⚡</div><h3 class="D">AI 에이전트 및 생산성</h3><p>모든 통화를 구조화된 비즈니스 자산으로 전환하세요.</p><ul class="pfl"><li>영구적 통화 검색 ("3주 전 조건" 초단위 검색)</li><li>자동 할 일 제안 + 캘린더 연동</li><li>개인정보(PII) 자동 마스킹</li><li>비즈니스 인사이트 대시보드</li><li>AI 비서 (자비스 베타)</li></ul></div>
+        <div class="pcard pk4"><span class="pbadge pb4">팩 4</span><div class="pi">🔒</div><h3 class="D">데이터 및 플랫폼</h3><p>개인정보 보호 규제가 빠르게 변하는 시장에 최적화되었습니다.</p><ul class="pfl"><li>즉각적인 데이터 삭제 (GDPR 잊힐 권리)</li><li>휘발성 UI: 24시간 후 자동 삭제</li><li>온디바이스 SDK 우선 처리</li><li>영지식(Zero-Knowledge) 아키텍처</li><li>통신사별 규제 구성 레이어</li></ul></div>
+      </div>
+      <div class="shint">← 드래그하여 모든 팩 보기 →</div>
+    </div>
+    <!-- DEMO -->
+    <div style="margin-top:72px;text-align:center;margin-bottom:44px" class="fu d2">
+      <span class="lbl" style="text-align:center">인터랙티브 데모</span>
+      <h2 class="D" style="font-family:var(--fd);font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:700;letter-spacing:-.025em">실제 작동 확인하기.</h2>
+    </div>
+    <div class="dw fu d3">
+      <div class="dtabs">
+        <div class="dt on" onclick="demo(1,this)"><div class="dti">🎙️</div><div><h4>AI 통화 처리</h4><p>AI가 응답, 요약, 할 일 제안</p></div></div>
+        <div class="dt" onclick="demo(2,this)"><div class="dti">🛡️</div><div><h4>보안 및 신뢰</h4><p>실시간 딥페이크 탐지 및 차단</p></div></div>
+        <div class="dt" onclick="demo(3,this)"><div class="dti">🔍</div><div><h4>AI 에이전트 검색</h4><p>언제든지 모든 통화 검색</p></div></div>
+        <div class="dt" onclick="demo(4,this)"><div class="dti">🔒</div><div><h4>개인정보 제어</h4><p>영지식, 온디바이스 보안</p></div></div>
+      </div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="pscr">
+          <div class="pst"><span>9:41</span><span>●●● 🔋</span></div>
+          <!-- Demo 1 -->
+          <div class="ds on" id="d1">
+            <div class="cal"><div class="cav">📞</div><div class="cn">알 수 없는 번호</div><div class="cs">+60 12-XXX-XXXX</div><div class="aibadge">🤖 ixi-O AI 응답</div></div>
+            <div style="margin-top:auto">
+              <div class="sum"><div class="sh2">📋 자동 요약 (12분 통화)</div>미팅 요청 확인됨. 예산: $50,000. 이번 주 금요일까지 후속 조치 필요.</div>
+              <div class="tchip">📅 추가: 금요일 후속 통화</div>
+            </div>
+          </div>
+          <!-- Demo 2 -->
+          <div class="ds" id="d2">
+            <div class="cal"><div class="cav">⚠️</div><div class="cn">수신 전화</div><div class="cs">+1 (888) XXX-XXXX</div></div>
+            <div style="margin-top:auto">
+              <div class="dw2"><span>🔴</span><span>AI 딥페이크 음성: 94% 확신</span></div>
+              <div class="dwa"><span>⚠️</span><span>알려진 피싱 스크립트 패턴 탐지됨</span></div>
+              <div class="blk">🛡️ 통화 차단됨 — 고객 보호됨</div>
+            </div>
+          </div>
+          <!-- Demo 3 -->
+          <div class="ds" id="d3">
+            <div class="sbar"><span>🔍</span><span>사라 계약 조건...</span></div>
+            <div class="sres"><div class="srt">📞 사라와의 통화 · 3주 전 · 14:32</div><div class="srb">"12만 달러, 6개월 조건, 2026년 3분기까지 납품에 동의함."</div></div>
+            <div class="sres"><div class="srt">📞 후속 통화 · 2주 전 · 10:15</div><div class="srb">"이사회 승인됨. 이번 주말까지 계약서 서명 예정."</div></div>
+          </div>
+          <!-- Demo 4 -->
+          <div class="ds" id="d4">
+            <div style="font-size:.7rem;color:var(--t3);font-weight:700;margin-bottom:12px">개인정보 및 데이터 제어</div>
+            <div class="priv-r"><span class="priv-l">온디바이스 AI 처리</span><span class="pon pg">켜짐</span></div>
+            <div class="priv-r"><span class="priv-l">영지식 모드</span><span class="pon pg">켜짐</span></div>
+            <div class="priv-r"><span class="priv-l">휘발성 UI (24시간 후 자동 삭제)</span><span class="pon pg">켜짐</span></div>
+            <div class="priv-r"><span class="priv-l">GDPR 데이터 내보내기</span><span class="pon pp">준비됨</span></div>
+            <div class="priv-r"><span class="priv-l">즉시 삭제</span><span class="pon pp">활성화됨</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S6: TRUST -->
+<section id="s6" class="layer">
+  <div class="box">
+    <div class="th fu"><span class="lbl" style="text-align:center">작동 방식 및 신뢰성</span>
+      <h2 class="D">이미 수백만 건의 통화를 처리 중입니다.<br>프로토타입이 아닙니다.</h2>
+      <p>글로벌 시장 진출 전, LG유플러스의 실제 네트워크에서 철저히 검증되었습니다.</p>
+    </div>
+    <div class="tg fu">
+      <div class="tp"><div class="tck">✓</div><h4>대규모 상용망 검증 완료</h4><p>ixi-O는 한국 LG유플러스 상용망에서 수천만 건의 통화를 처리하고 있습니다. 실제 사용자, 실제 통화, 실제 결과입니다.</p></div>
+      <div class="tp"><div class="tck">✓</div><h4>인프라 변경 불필요</h4><p>기존 네트워크 위에 SaaS 형태로 배포됩니다. 재구축이나 재설정이 필요 없습니다.</p></div>
+      <div class="tp"><div class="tck">✓</div><h4>분기가 아닌 몇 주 안에</h4><p>고객사의 로드맵에 맞춘 PoC → 파일럿 → 상용화가 가능합니다. 2년짜리 통합 프로젝트가 아닙니다.</p></div>
+      <div class="tp"><div class="tck">✓</div><h4>설계부터 적용된 프라이버시</h4><p>온디바이스 AI 처리. 음성 데이터는 단말기를 벗어나지 않습니다. 규제가 빠르게 변하는 시장에 최적화되었습니다.</p></div>
+    </div>
+    <div class="cbrow fu d2">
+      <div class="cb"><span>🇪🇺</span><span>GDPR 준수</span></div>
+      <div class="cb"><span>🇺🇸</span><span>CCPA 준비 완료</span></div>
+      <div class="cb"><span>🔐</span><span>ISO 27001</span></div>
+      <div class="cb"><span>✅</span><span>SOC 2 Type II</span></div>
+      <div class="cb"><span>🇲🇾</span><span>PDPA (말레이시아)</span></div>
+    </div>
+    <div class="maxis fu d3"><p><strong>ixi-O는 현재 당사의 첫 글로벌 통신사 파트너인 말레이시아 Maxis와 PoC를 진행 중입니다.</strong> 배포는 일정대로 진행되며 확장되고 있습니다. 우리는 다음 통신사 파트너를 적극적으로 찾고 있습니다.</p></div>
+  </div>
+</section>
+
+<!-- S7: CTA -->
+<section id="s7" class="layer">
+  <div class="box ci">
+    <p class="cpre fu">Maxis와 PoC 진행 중 · 다음 파트너를 찾습니다</p>
+    <h2 class="D fu d1">파일럿을<br><span class="G">시작하시겠습니까?</span></h2>
+    <p class="csub fu d2">다음 통신사 파트너를 찾고 있습니다. 귀사의 네트워크에서 어떤 혁신이 가능한지 확인해 보세요.</p>
+    <div class="fw fu d3">
+      <div id="ff">
+        <div class="ff"><label>이름</label><input type="text" id="fn" placeholder="성함을 입력해주세요"></div>
+        <div class="ff"><label>회사명</label><input type="text" id="fc" placeholder="회사명을 입력해주세요"></div>
+        <div class="ff">
+          <label>회사 이메일</label>
+          <input type="email" id="fe" placeholder="you@company.com" oninput="chkEmail()">
+          <div class="ferr" id="ferr">회사 이메일을 사용해 주세요 (Gmail, Yahoo 등 제외)</div>
+        </div>
+        <input type="hidden" id="fst"><input type="hidden" id="froi">
+        <button class="sbtn" id="sbtn" onclick="sub()">대화 시작하기 →</button>
+        <p class="fmic">부담 없이, 귀사의 네트워크에서 가능한 혁신에 대해 이야기해 봅시다.</p>
+      </div>
+      <div class="fsuc" id="fsuc"><div class="fsi">✅</div><h3 class="D">곧 연락드리겠습니다.</h3><p>저희 팀에서 초기 상담 일정을 잡기 위해 24시간 이내에 연락드릴 것입니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="box"><p>© 2026 ixi-O by LG유플러스 · 글로벌 통신사 플랫폼 · 모바일의 향후 10년을 위한 설계</p></div></footer>
+
+<script>
+// ── Scroll progress
+window.addEventListener('scroll',()=>{
+  const p=document.getElementById('prog');
+  const pct=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100;
+  p.style.width=pct+'%';
+},{passive:true});
+
+// ── Intersection observer
+const io=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('on');io.unobserve(x.target)}})},{threshold:.15});
+document.querySelectorAll('.fu').forEach(el=>io.observe(el));
+
+// ── Bar chart animation
+const bio=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){
+  x.target.querySelectorAll('.bf').forEach((b,i)=>{
+    const w=b.dataset.w;
+    setTimeout(()=>{b.style.width=w+'%';b.classList.add('on');},i*110);
+  });
+  bio.unobserve(x.target);
+}})},{threshold:.3});
+document.querySelectorAll('.bcard').forEach(el=>bio.observe(el));
+
+// ── Story pick
+let story='';
+function pick(s){
+  story=s;
+  localStorage.setItem('ixio_story',s);
+  document.getElementById('fst').value=s;
+  // Cards
+  ['ca','cb'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.classList.remove('active','dim');
+    el.classList.add(id==='c'+s.toLowerCase()?'active':'dim');
+  });
+  // Fact panels
+  const fa=document.getElementById('fa'),fb=document.getElementById('fb');
+  if(s==='A'){fa.classList.add('lit');fa.classList.remove('dim');fb.classList.add('dim');fb.classList.remove('lit');}
+  else{fb.classList.add('lit');fb.classList.remove('dim');fa.classList.add('dim');fa.classList.remove('lit');}
+  // Charts & copy
+  document.getElementById('bca').style.display=s==='A'?'block':'none';
+  document.getElementById('bcb').style.display=s==='B'?'block':'none';
+  document.querySelectorAll('.pa').forEach(el=>el.style.display=s==='A'?'block':'none');
+  document.querySelectorAll('.pb').forEach(el=>el.style.display=s==='B'?'block':'none');
+  if(s==='B') document.getElementById('h3a').textContent='기록되지 않은 통화는 업무상 법적 리스크가 되고 있습니다.';
+  else document.getElementById('h3a').textContent='AI 딥페이크로 인해 발신자 표시가 무의미해졌습니다.';
+  // Scroll
+  setTimeout(()=>document.getElementById('s2').scrollIntoView({behavior:'smooth'}),420);
+}
+
+// ── Counter animation
+const cio=new IntersectionObserver(e=>{if(e[0].isIntersecting){
+  const na=document.getElementById('na'),nb=document.getElementById('nb');
+  const t=performance.now();
+  const step=now=>{
+    const pr=Math.min((now-t)/1300,1),ease=1-Math.pow(1-pr,3);
+    na.textContent='10명 중 '+Math.floor(ease*7)+'명';
+    nb.textContent=Math.floor(ease*85)+'%';
+    if(pr<1)requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+  cio.disconnect();
+}},{threshold:.3});
+cio.observe(document.getElementById('s2'));
+
+// ── X-chart animation
+const xio=new IntersectionObserver(e=>{if(e[0].isIntersecting){
+  const ap=document.getElementById('ap'),op=document.getElementById('op');
+  const aa=document.getElementById('aa'),oa=document.getElementById('oa');
+  const xd=document.getElementById('xdot'),xr=document.getElementById('xring'),xl=document.getElementById('xlbl');
+  const al=ap.getTotalLength(),ol=op.getTotalLength();
+  ap.style.strokeDasharray=al;ap.style.strokeDashoffset=al;
+  op.style.strokeDasharray=ol;op.style.strokeDashoffset=ol;
+  setTimeout(()=>{
+    ap.style.transition='stroke-dashoffset 1.4s cubic-bezier(.16,1,.3,1)';
+    op.style.transition='stroke-dashoffset 1.4s cubic-bezier(.16,1,.3,1)';
+    ap.style.strokeDashoffset=0;op.style.strokeDashoffset=0;
+  },80);
+  setTimeout(()=>{
+    aa.style.transition='opacity .8s ease';oa.style.transition='opacity .8s ease';
+    aa.style.opacity=1;oa.style.opacity=1;
+  },700);
+  setTimeout(()=>{
+    [xd,xr,xl].forEach(el=>{el.style.transition='opacity .4s ease';el.style.opacity=1;});
+  },1500);
+  xio.disconnect();
+}},{threshold:.25});
+xio.observe(document.getElementById('xsvg'));
+
+// ── ROI Calculator
+function fmt(n){if(n>=1e9)return'$'+(n/1e9).toFixed(1)+'B';if(n>=1e6)return'$'+(n/1e6).toFixed(1)+'M';if(n>=1e3)return'$'+(n/1e3).toFixed(0)+'K';return'$'+Math.round(n).toLocaleString();}
+function countUp(el,target,dur){const t=performance.now();const step=now=>{const pr=Math.min((now-t)/dur,1),ease=1-Math.pow(1-pr,3);el.textContent=fmt(ease*target);if(pr<1)requestAnimationFrame(step);};requestAnimationFrame(step);}
+function roi(){
+  const subs=+document.getElementById('ss').value*1e6;
+  const churn=+document.getElementById('sc').value/1000;
+  const spam=+document.getElementById('ssp').value/100;
+  const ARPU=18,rl=.35,al=.04;
+  const mc=subs*churn,sc=mc*spam,sv=sc*rl;
+  const cr=sv*ARPU*12,ar=subs*al*ARPU*.1*12,tot=cr+ar;
+  document.getElementById('vs').textContent=document.getElementById('ss').value+'M';
+  document.getElementById('vc').textContent=(document.getElementById('sc').value/10).toFixed(1)+'%';
+  document.getElementById('vsp').textContent=document.getElementById('ssp').value+'%';
+  ['ss','sc','ssp'].forEach(id=>{const s=document.getElementById(id);const p=((s.value-s.min)/(s.max-s.min))*100;s.style.setProperty('--fp',p+'%');});
+  countUp(document.getElementById('rc'),cr,400);
+  countUp(document.getElementById('ra'),ar,400);
+  countUp(document.getElementById('rt'),tot,400);
+  const d={subs:document.getElementById('ss').value+'M',churn:(document.getElementById('sc').value/10).toFixed(1)+'%',impact:fmt(tot)};
+  localStorage.setItem('ixio_roi',JSON.stringify(d));
+  document.getElementById('froi').value=JSON.stringify(d);
+}
+roi();
+
+// ── Pack drag scroll
+const ps=document.getElementById('ps');
+let drag=false,sx,sl;
+ps.addEventListener('mousedown',e=>{drag=true;sx=e.pageX-ps.offsetLeft;sl=ps.scrollLeft;ps.style.cursor='grabbing'});
+ps.addEventListener('mouseleave',()=>{drag=false;ps.style.cursor='grab'});
+ps.addEventListener('mouseup',()=>{drag=false;ps.style.cursor='grab'});
+ps.addEventListener('mousemove',e=>{if(!drag)return;e.preventDefault();ps.scrollLeft=sl-(e.pageX-ps.offsetLeft-sx)*1.4;});
+
+// ── Demo tabs
+let autoT,curTab=1;
+function demo(n,el){
+  clearInterval(autoT);
+  document.querySelectorAll('.dt').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.ds').forEach(d=>d.classList.remove('on'));
+  if(el)el.classList.add('on');
+  const ds=document.getElementById('d'+n);
+  if(ds)ds.classList.add('on');
+  curTab=n;
+  startAuto();
+}
+function startAuto(){
+  autoT=setInterval(()=>{
+    curTab=curTab%4+1;
+    const tabs=document.querySelectorAll('.dt');
+    demo(curTab,tabs[curTab-1]);
+  },3800);
+}
+startAuto();
+
+// ── Email validation
+const FREE=['gmail.com','yahoo.com','hotmail.com','outlook.com','naver.com','kakao.com','daum.net','icloud.com','aol.com','protonmail.com','live.com','me.com'];
+let emailOk=true;
+function chkEmail(){
+  const v=document.getElementById('fe').value,dom=(v.split('@')[1]||'').toLowerCase();
+  const bad=v.includes('@')&&FREE.includes(dom);
+  document.getElementById('fe').classList.toggle('err',bad);
+  document.getElementById('ferr').classList.toggle('on',bad);
+  document.getElementById('sbtn').disabled=bad;
+  emailOk=!bad;
+}
+
+// ── Form submit
+async function sub(){
+  const n=document.getElementById('fn').value.trim();
+  const c=document.getElementById('fc').value.trim();
+  const e=document.getElementById('fe').value.trim();
+  if(!n||!c||!e){alert('모든 필드를 입력해 주세요.');return;}
+  if(!emailOk)return;
+  const btn=document.getElementById('sbtn');
+  btn.textContent='전송 중...';btn.disabled=true;
+  try{
+    const r=await fetch('https://formspree.io/f/xvgzpoyy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,company:c,email:e,story:localStorage.getItem('ixio_story')||'',roi:localStorage.getItem('ixio_roi')||''})});
+    if(r.ok){document.getElementById('ff').style.display='none';document.getElementById('fsuc').classList.add('on');}
+    else{btn.textContent='대화 시작하기 →';btn.disabled=false;alert('오류가 발생했습니다. 다시 시도해 주세요.');}
+  }catch{
+    document.getElementById('ff').style.display='none';document.getElementById('fsuc').classList.add('on');
+  }
+}
+
+// ── Restore state
+(()=>{
+  const st=localStorage.getItem('ixio_story');if(st)document.getElementById('fst').value=st;
+  const ri=localStorage.getItem('ixio_roi');if(ri)document.getElementById('froi').value=ri;
+  ['ss','sc','ssp'].forEach(id=>{const s=document.getElementById(id);const p=((s.value-s.min)/(s.max-s.min))*100;s.style.setProperty('--fp',p+'%');});
+})();
+</script>
+</body>
+</html>
+```
